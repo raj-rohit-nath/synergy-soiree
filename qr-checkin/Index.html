@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800;900&family=Nunito+Sans:wght@400;600;700;800&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#123049;
+    --navy-deep:#0b2135;
+    --teal:#2fa4b8;
+    --teal-dark:#238b9d;
+    --teal-light:#eaf6f8;
+    --green-dark:#238b9d;
+    --sky-top:#eaf6f8;
+    --sky-bottom:#ffffff;
+    --paper:#ffffff;
+    --ink:#1e2b36;
+    --ink-soft:#5b6b76;
+    --lock:#c7cdd1;
+    --radius:18px;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    font-family:'Nunito Sans', system-ui, sans-serif;
+    background:linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 340px);
+    color:var(--ink);
+    padding-bottom:60px;
+  }
+
+  #gate{
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(160deg, rgba(10,35,55,0.55) 0%, rgba(8,28,45,0.82) 100%),
+      url('https://images.unsplash.com/photo-1503461007167-0e27f216b896?fm=jpg&q=60&w=1200&auto=format&fit=crop');
+    background-size:cover;
+    background-position:center;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+    z-index:100;
+  }
+  .gate-card{
+    background:var(--paper);
+    border-radius:22px;
+    padding:30px 24px;
+    max-width:400px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+  }
+  .gate-card h2{
+    font-family:'Poppins',sans-serif;
+    font-weight:900;
+    font-size:22px;
+    margin:0 0 6px;
+    color:var(--navy);
+  }
+  .gate-card p{
+    font-size:14px;
+    color:var(--ink-soft);
+    margin:0 0 20px;
+  }
+  .field{ text-align:left; margin-bottom:14px; }
+  .field label{
+    display:block;
+    font-weight:800;
+    font-size:13px;
+    color:var(--navy);
+    margin-bottom:6px;
+  }
+  .field input{
+    width:100%;
+    font-size:16px;
+    font-family:'Nunito Sans', sans-serif;
+    padding:13px 14px;
+    border-radius:12px;
+    border:2px solid #e2e6e8;
+    background:#f8f9fa;
+  }
+  .field input:focus{ outline:none; border-color:var(--teal); background:white; }
+  #gate-error{
+    color:#c0392b;
+    font-size:13px;
+    font-weight:700;
+    margin-top:-6px;
+    margin-bottom:10px;
+    display:none;
+  }
+  button.primary-btn{
+    font-family:'Nunito Sans', sans-serif;
+    font-weight:800;
+    font-size:16px;
+    color:white;
+    background:var(--teal-dark);
+    border:none;
+    border-radius:12px;
+    padding:14px 18px;
+    min-height:50px;
+    width:100%;
+    cursor:pointer;
+    margin-top:6px;
+  }
+  button.primary-btn:disabled{opacity:0.6;}
+  .gate-hint{ font-size:12px; color:var(--ink-soft); margin-top:12px; }
+
+  .top{
+    background-image:
+      linear-gradient(180deg, rgba(10,35,55,0.25) 0%, rgba(8,28,45,0.78) 65%, rgba(8,28,45,0.94) 100%),
+      url('https://images.unsplash.com/photo-1503461007167-0e27f216b896?fm=jpg&q=70&w=1200&auto=format&fit=crop');
+    background-size:cover;
+    background-position:center;
+    color:white;
+    padding:26px 20px 30px;
+    border-radius:0 0 28px 28px;
+    position:relative;
+    overflow:hidden;
+  }
+  .brand-row{
+    display:flex; align-items:center; gap:10px;
+    font-size:13px; font-weight:800; letter-spacing:0.08em;
+    color:#bfe4ea; text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .brand-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);}
+  h1{
+    font-family:'Poppins', sans-serif;
+    font-weight:900;
+    font-size:30px;
+    line-height:1.05;
+    margin:0;
+    letter-spacing:0.01em;
+    color:white;
+    text-shadow:0 2px 10px rgba(0,0,0,0.25);
+  }
+  h1 span{
+    display:block;
+    font-family:'Caveat', cursive;
+    font-weight:600;
+    font-size:26px;
+    color:#8fe0ea;
+    margin-top:2px;
+  }
+  .guest-line{ margin-top:10px; font-size:14px; color:#dff3f5; font-weight:700; }
+  .clock{ margin-top:8px; font-size:15px; color:#d8eef0; font-weight:600; }
+  .sync-status{ margin-top:6px; font-size:12px; font-weight:700; color:#9fe0e8; }
+  .progress-wrap{
+    margin-top:16px;
+    background:rgba(255,255,255,0.22);
+    border-radius:999px;
+    height:12px;
+    overflow:hidden;
+  }
+  .progress-bar{
+    height:100%;
+    background:linear-gradient(90deg, var(--teal), #bdeef2);
+    border-radius:999px;
+    transition:width 0.5s ease;
+  }
+  .progress-label{ margin-top:8px; font-size:14px; font-weight:700; color:#eafbfc; }
+
+  .photo-section{
+    max-width:560px;
+    margin:18px auto 0;
+    padding:0 18px;
+  }
+  .photo-card{
+    background:var(--paper);
+    border:2px dashed var(--teal);
+    border-radius:var(--radius);
+    padding:18px 16px;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .photo-card-icon{
+    flex:0 0 auto;
+    width:52px; height:52px;
+    border-radius:50%;
+    background:rgba(47,164,184,0.12);
+    display:flex; align-items:center; justify-content:center;
+    font-size:24px;
+  }
+  .photo-card-body{ flex:1; min-width:0; }
+  .photo-card-title{
+    font-family:'Poppins',sans-serif;
+    font-weight:800;
+    font-size:16px;
+    color:var(--navy);
+  }
+  .photo-card-sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-top:2px;
+    margin-bottom:12px;
+  }
+  button.photo-upload-btn{
+    font-family:'Nunito Sans', sans-serif;
+    font-weight:800;
+    font-size:14px;
+    color:white;
+    background:var(--teal-dark);
+    border:none;
+    border-radius:12px;
+    padding:11px 16px;
+    min-height:44px;
+    cursor:pointer;
+  }
+  .photo-status{
+    margin-top:10px;
+    font-size:13px;
+    font-weight:700;
+    color:var(--teal-dark);
+    min-height:16px;
+  }
+  .photo-thumbs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:12px;
+  }
+  .photo-thumb{
+    width:64px; height:64px;
+    border-radius:10px;
+    background-color:#eef6f4;
+    background-size:cover;
+    background-position:center;
+    position:relative;
+    overflow:hidden;
+    border:2px solid transparent;
+  }
+  .photo-thumb.done{ border-color:#8bbf58; }
+  .photo-thumb.error{ border-color:#c0392b; }
+  .photo-thumb-spinner{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,0.6);
+  }
+  .photo-thumb-spinner::after{
+    content:"";
+    width:18px; height:18px;
+    border:3px solid var(--teal);
+    border-top-color:transparent;
+    border-radius:50%;
+    animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .photo-thumb.done .photo-thumb-spinner,
+  .photo-thumb.error .photo-thumb-spinner{ display:none; }
+  .photo-thumb.error::before{
+    content:"⚠️";
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px;
+    background:rgba(255,255,255,0.75);
+  }
+
+  .content{ padding:22px 18px 10px; max-width:560px; margin:0 auto; }
+
+  .day-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--teal-dark);
+    color:white;
+    font-family:'Poppins', sans-serif;
+    font-weight:800;
+    font-size:15px;
+    padding:9px 20px;
+    border-radius:999px;
+    margin:28px 0 4px;
+  }
+  .day-pill::before{
+    content:"🚩";
+    font-size:13px;
+  }
+  .day-date{ font-size:13px; font-weight:700; color:var(--ink-soft); margin:6px 0 16px 4px; }
+
+  .timeline{ position:relative; padding-left:6px; }
+
+  .card{
+    position:relative;
+    display:flex;
+    gap:14px;
+    background:var(--paper);
+    border-radius:var(--radius);
+    padding:16px 16px 16px 14px;
+    margin-bottom:12px;
+    box-shadow:0 2px 10px rgba(18,48,73,0.06);
+    border:2px solid transparent;
+    transition:border-color 0.3s ease, opacity 0.3s ease;
+  }
+  .card.locked{opacity:0.55;}
+  .card.current{ border-color:var(--teal); box-shadow:0 4px 18px rgba(79,199,187,0.25); }
+  .card.done{ background:#f3faf5; }
+
+  .icon-wrap{
+    flex:0 0 auto;
+    width:52px; height:52px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:24px;
+    background:#eef6f4;
+  }
+  .card.current .icon-wrap{background:rgba(79,199,187,0.18);}
+  .card.done .icon-wrap{background:rgba(139,191,88,0.2);}
+  .card.locked .icon-wrap{background:#f0f1f2;}
+
+  .card-body{flex:1; min-width:0;}
+  .time{
+    font-weight:800;
+    font-size:13px;
+    color:var(--teal-dark);
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+  }
+  .card.locked .time{color:var(--ink-soft);}
+  .title{
+    font-family:'Poppins', sans-serif;
+    font-weight:700;
+    font-size:17px;
+    margin-top:2px;
+    color:var(--ink);
+    line-height:1.25;
+  }
+  .tag{
+    display:inline-block;
+    margin-top:8px;
+    font-size:12px;
+    font-weight:800;
+    padding:4px 10px;
+    border-radius:999px;
+    letter-spacing:0.02em;
+  }
+  .tag.live{ background:rgba(255,166,43,0.15); color:#c67300; }
+  .tag.live::before{
+    content:"";
+    display:inline-block;
+    width:7px; height:7px;
+    border-radius:50%;
+    background:#ff8a00;
+    margin-right:6px;
+    animation:pulse 1.6s infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .tag.live::before{animation:none;} }
+  @keyframes pulse{ 0%{opacity:1;} 50%{opacity:0.3;} 100%{opacity:1;} }
+
+  .action{ margin-top:12px; }
+  button.done-btn{
+    font-family:'Nunito Sans', sans-serif;
+    font-weight:800;
+    font-size:15px;
+    color:white;
+    background:var(--teal-dark);
+    border:none;
+    border-radius:12px;
+    padding:12px 18px;
+    min-height:48px;
+    width:100%;
+    cursor:pointer;
+  }
+  button.done-btn:active{background:var(--navy);}
+  button.done-btn:disabled{opacity:0.6;}
+
+  .done-label{
+    display:flex; align-items:center; gap:6px;
+    font-weight:800; font-size:14px; color:var(--green-dark); margin-top:8px;
+  }
+  .locked-label{
+    display:flex; align-items:center; gap:6px;
+    font-weight:700; font-size:13px; color:var(--ink-soft); margin-top:8px;
+  }
+
+  .finale{
+    text-align:center;
+    margin:30px 0 10px;
+    padding:26px 20px;
+    background:linear-gradient(160deg, var(--teal-dark), var(--navy));
+    color:white;
+    border-radius:var(--radius);
+  }
+  .finale h2{ font-family:'Poppins',sans-serif; font-size:20px; margin:0 0 6px; }
+  .finale p{ margin:0; font-size:14px; color:#d8eef0; }
+  .finale .script{
+    display:block;
+    font-family:'Caveat', cursive;
+    font-weight:600;
+    font-size:22px;
+    color:#8fe0ea;
+    margin-top:8px;
+  }
+
+  .footer{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    margin-top:26px;
+    padding:0 20px 10px;
+  }
+  .footer button{
+    background:white;
+    border:2px solid #dbe6e8;
+    color:var(--navy);
+    font-family:'Nunito Sans', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    padding:12px 18px;
+    border-radius:12px;
+    cursor:pointer;
+    width:100%;
+    max-width:340px;
+  }
+  .footer button:active{ background:var(--teal-light); border-color:var(--teal); }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <h2>Welcome to Synergy Soiree</h2>
+    <p>Enter your details to start your personal journey.</p>
+    <div class="field">
+      <label for="companyInput">Company Name</label>
+      <input id="companyInput" type="text" placeholder="e.g. EXIM Synergy" autocomplete="organization">
+    </div>
+    <div class="field">
+      <label for="nameInput">Your Name</label>
+      <input id="nameInput" type="text" placeholder="e.g. Raj Ahmed" autocomplete="name">
+    </div>
+    <div id="gate-error">Please fill in both fields.</div>
+    <button class="primary-btn" id="startBtn">Start My Journey</button>
+    <div class="gate-hint">This only appears once on this phone.</div>
+  </div>
+</div>
+
+<div class="top">
+  <div class="brand-row"><span class="brand-dot"></span>EXIM Synergy</div>
+  <h1>Synergy Soiree<span>your journey, one step at a time</span></h1>
+  <div class="guest-line" id="guestLine"></div>
+  <div class="clock" id="clock">—</div>
+  <div class="sync-status" id="syncStatus"></div>
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="progress-label" id="progressLabel">0 of 16 steps complete</div>
+</div>
+
+<div class="photo-section">
+  <div class="photo-card">
+    <div class="photo-card-icon">📸</div>
+    <div class="photo-card-body">
+      <div class="photo-card-title">Share Your Photos</div>
+      <div class="photo-card-sub">Snapped something great? Add it to our shared album — anytime, no need to wait.</div>
+      <button class="photo-upload-btn" id="photoUploadBtn" type="button">Choose Photos</button>
+      <input type="file" id="photoInput" accept="image/*" multiple capture="environment" style="display:none;">
+      <div class="photo-status" id="photoStatus"></div>
+      <div class="photo-thumbs" id="photoThumbs"></div>
+    </div>
+  </div>
+</div>
+
+<div class="content" id="content"></div>
+
+<div class="footer">
+  <button id="resetBtn">Reset my progress</button>
+  <button id="reregisterBtn">Not registered correctly? Re-enter my details</button>
+</div>
+
+<script>
+const EVENTS = [
+  { id:"d1-1", day:1, timeLabel:"11:45", title:"Check-in, Welcome Drinks & Registration", icon:"🛎️", start:"2026-08-11T11:45:00+06:00" },
+  { id:"d1-2", day:1, timeLabel:"13:30 – 14:30", title:"Lunch", icon:"🍽️", start:"2026-08-11T13:30:00+06:00" },
+  { id:"d1-4", day:1, timeLabel:"16:00 – 18:00", title:"Beach Activities & Photo Session", icon:"🏖️", start:"2026-08-11T16:00:00+06:00" },
+  { id:"d1-5", day:1, timeLabel:"18:30 – 19:30", title:"Evening Snacks & Networking", icon:"🥤", start:"2026-08-11T18:30:00+06:00" },
+  { id:"d1-6", day:1, timeLabel:"19:30 – 21:30", title:"Formal Session", icon:"🎤", start:"2026-08-11T19:30:00+06:00" },
+  { id:"d1-7", day:1, timeLabel:"21:30 onwards", title:"Dinner", icon:"🍽️", start:"2026-08-11T21:30:00+06:00" },
+
+  { id:"d2-1", day:2, timeLabel:"08:00 – 10:00", title:"Breakfast", icon:"☕", start:"2026-08-12T08:00:00+06:00" },
+  { id:"d2-3", day:2, timeLabel:"13:00 – 14:00", title:"Lunch", icon:"🍽️", start:"2026-08-12T13:00:00+06:00" },
+  { id:"d2-5", day:2, timeLabel:"15:00 – 18:00", title:"Sightseeing", icon:"🗺️", start:"2026-08-12T15:00:00+06:00" },
+  { id:"d2-7", day:2, timeLabel:"18:30 – 19:30", title:"Evening Snacks & Networking", icon:"🥤", start:"2026-08-12T18:30:00+06:00" },
+  { id:"d2-8", day:2, timeLabel:"19:30 – 21:30", title:"Formal Session & Awards Ceremony", icon:"🏆", start:"2026-08-12T19:30:00+06:00" },
+  { id:"d2-9", day:2, timeLabel:"21:30 – 22:30", title:"Dinner", icon:"🍽️", start:"2026-08-12T21:30:00+06:00" },
+  { id:"d2-10", day:2, timeLabel:"22:30 onwards", title:"Gala Night & Cultural Performance", icon:"🎉", start:"2026-08-12T22:30:00+06:00" },
+
+  { id:"d3-1", day:3, timeLabel:"08:00 – 10:00", title:"Breakfast", icon:"🍳", start:"2026-08-13T08:00:00+06:00" },
+  { id:"d3-2", day:3, timeLabel:"10:00 – 11:30", title:"Check-out", icon:"🧳", start:"2026-08-13T10:00:00+06:00" },
+  { id:"d3-3", day:3, timeLabel:"12:00", title:"Airport Transfer", icon:"✈️", start:"2026-08-13T12:00:00+06:00" }
+];
+
+const DAY_LABELS = { 1: "August 11, 2026", 2: "August 12, 2026", 3: "August 13, 2026" };
+
+const GUEST_KEY = "soiree_guest_v1";
+const DONE_KEY = "soiree_done_v1";
+const PENDING_KEY = "soiree_pending_v1";
+
+function loadJSON(key, fallback){
+  try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+  catch(e){ return fallback; }
+}
+function saveJSON(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+}
+
+let guest = loadJSON(GUEST_KEY, null);
+let doneIds = loadJSON(DONE_KEY, []);
+let pending = loadJSON(PENDING_KEY, []);
+
+function isDone(id){ return doneIds.includes(id); }
+
+/* ---------- Server calls, via google.script.run (no CORS involved) ---------- */
+function callServer(fnName, args){
+  return new Promise(function(resolve, reject){
+    google.script.run
+      .withSuccessHandler(resolve)
+      .withFailureHandler(reject)
+      [fnName].apply(null, args);
+  });
+}
+
+function setSyncStatus(text){
+  const el = document.getElementById("syncStatus");
+  if(el) el.textContent = text;
+}
+
+function trySync(){
+  if(!guest) return;
+  if(pending.length === 0){ setSyncStatus(""); return; }
+  setSyncStatus("Saving...");
+  const stepId = pending[0];
+  callServer("markStepDone", [guest.guestId, stepId])
+    .then(function(res){
+      if(res && !res.error){
+        pending = pending.filter(function(id){ return id !== stepId; });
+        saveJSON(PENDING_KEY, pending);
+        setSyncStatus(pending.length ? "Saving..." : "Saved ✓");
+        if(pending.length) trySync();
+      } else {
+        setSyncStatus("Not saved: " + (res && res.error ? res.error : "unknown error"));
+      }
+    })
+    .catch(function(err){ setSyncStatus("Offline — will retry saving"); console.error(err); });
+}
+
+function markDone(id){
+  if(!isDone(id)){
+    doneIds.push(id);
+    saveJSON(DONE_KEY, doneIds);
+  }
+  if(!pending.includes(id)){
+    pending.push(id);
+    saveJSON(PENDING_KEY, pending);
+  }
+  render();
+  trySync();
+}
+
+function getStatus(index){
+  const ev = EVENTS[index];
+  if(isDone(ev.id)) return "done";
+  const prev = EVENTS[index-1];
+  if(!prev || isDone(prev.id)) return "current";
+  return "locked";
+}
+
+function isHappeningNow(index){
+  const ev = EVENTS[index];
+  const start = new Date(ev.start);
+  const next = EVENTS[index+1];
+  const end = next ? new Date(next.start) : new Date(start.getTime() + 3*60*60*1000);
+  const now = new Date();
+  return now >= start && now < end;
+}
+
+function render(){
+  const content = document.getElementById("content");
+  content.innerHTML = "";
+
+  [1,2,3].forEach(function(dayNum){
+    const pill = document.createElement("div");
+    pill.className = "day-pill";
+    pill.textContent = "Day " + dayNum;
+    content.appendChild(pill);
+
+    const dateEl = document.createElement("div");
+    dateEl.className = "day-date";
+    dateEl.textContent = DAY_LABELS[dayNum];
+    content.appendChild(dateEl);
+
+    const timeline = document.createElement("div");
+    timeline.className = "timeline";
+
+    EVENTS.forEach(function(ev, idx){
+      if(ev.day !== dayNum) return;
+      const status = getStatus(idx);
+      const card = document.createElement("div");
+      card.className = "card " + status;
+
+      const iconWrap = document.createElement("div");
+      iconWrap.className = "icon-wrap";
+      iconWrap.textContent = ev.icon;
+      card.appendChild(iconWrap);
+
+      const body = document.createElement("div");
+      body.className = "card-body";
+
+      const timeEl = document.createElement("div");
+      timeEl.className = "time";
+      timeEl.textContent = ev.timeLabel;
+      body.appendChild(timeEl);
+
+      const titleEl = document.createElement("div");
+      titleEl.className = "title";
+      titleEl.textContent = ev.title;
+      body.appendChild(titleEl);
+
+      if(status === "current" && isHappeningNow(idx)){
+        const tag = document.createElement("div");
+        tag.className = "tag live";
+        tag.textContent = "Happening now";
+        body.appendChild(tag);
+      }
+
+      if(status === "current"){
+        const action = document.createElement("div");
+        action.className = "action";
+        const btn = document.createElement("button");
+        btn.className = "done-btn";
+        btn.textContent = "Mark as Done";
+        btn.onclick = function(){ markDone(ev.id); };
+        action.appendChild(btn);
+        body.appendChild(action);
+      } else if(status === "done"){
+        const label = document.createElement("div");
+        label.className = "done-label";
+        label.textContent = "✅ Completed";
+        body.appendChild(label);
+      } else {
+        const label = document.createElement("div");
+        label.className = "locked-label";
+        label.textContent = "🔒 Locked — finish the step above first";
+        body.appendChild(label);
+      }
+
+      card.appendChild(body);
+      timeline.appendChild(card);
+    });
+
+    content.appendChild(timeline);
+  });
+
+  const totalDone = doneIds.length;
+  const total = EVENTS.length;
+  if(totalDone === total){
+    const finale = document.createElement("div");
+    finale.className = "finale";
+    finale.innerHTML = "<h2>That's a wrap! 🎉</h2><p>Thank you for joining Synergy Soiree. Safe travels home.</p><span class=\"script\">See you next time!</span>";
+    content.appendChild(finale);
+  }
+
+  document.getElementById("progressBar").style.width = Math.round((totalDone/total)*100) + "%";
+  document.getElementById("progressLabel").textContent = totalDone + " of " + total + " steps complete";
+}
+
+function updateClock(){
+  const now = new Date();
+  const opts = { hour:'2-digit', minute:'2-digit', hour12:true, weekday:'short', month:'short', day:'numeric' };
+  document.getElementById("clock").textContent = now.toLocaleString('en-US', opts);
+}
+
+document.getElementById("resetBtn").addEventListener("click", function(){
+  if(confirm("Reset your progress back to the start? (Your registration stays the same.)")){
+    doneIds = [];
+    pending = [];
+    saveJSON(DONE_KEY, doneIds);
+    saveJSON(PENDING_KEY, pending);
+    render();
+  }
+});
+
+document.getElementById("reregisterBtn").addEventListener("click", function(){
+  if(confirm("This clears your name/company on this phone so you can enter them again. Continue?")){
+    localStorage.removeItem(GUEST_KEY);
+    localStorage.removeItem(DONE_KEY);
+    localStorage.removeItem(PENDING_KEY);
+    location.reload();
+  }
+});
+
+function showApp(){
+  document.getElementById("gate").style.display = "none";
+  document.getElementById("guestLine").textContent = guest.name + " · " + guest.company;
+  updateClock();
+  render();
+  setInterval(function(){ updateClock(); render(); }, 30000);
+
+  // Pull the latest progress from the sheet (e.g. if it was edited there).
+  callServer("getProgress", [guest.guestId]).then(function(res){
+    if(res && res.progress){
+      Object.keys(res.progress).forEach(function(stepId){
+        if(res.progress[stepId] && !doneIds.includes(stepId)) doneIds.push(stepId);
+      });
+      saveJSON(DONE_KEY, doneIds);
+      render();
+    }
+  }).catch(function(){ /* offline at load — local cache still works */ });
+
+  trySync();
+}
+
+function generateGuestId(){
+  return "g_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+}
+
+/* ---------- Photo upload ---------- */
+let photoUploadCount = 0;
+
+function resizeAndEncode(file){
+  return new Promise(function(resolve, reject){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const img = new Image();
+      img.onload = function(){
+        const maxDim = 1600;
+        let w = img.width, h = img.height;
+        if(w > maxDim || h > maxDim){
+          if(w >= h){ h = Math.round(h * (maxDim / w)); w = maxDim; }
+          else { w = Math.round(w * (maxDim / h)); h = maxDim; }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+        resolve({ dataUrl: dataUrl, base64: dataUrl.split(",")[1], mimeType: "image/jpeg" });
+      };
+      img.onerror = function(){ reject(new Error("Could not read that image.")); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function(){ reject(new Error("Could not read that file.")); };
+    reader.readAsDataURL(file);
+  });
+}
+
+function setPhotoStatus(text){
+  const el = document.getElementById("photoStatus");
+  if(el) el.textContent = text;
+}
+
+function handleOnePhoto(file, idx){
+  const thumbsEl = document.getElementById("photoThumbs");
+  const wrap = document.createElement("div");
+  wrap.className = "photo-thumb uploading";
+  wrap.innerHTML = '<div class="photo-thumb-spinner"></div>';
+  thumbsEl.appendChild(wrap);
+  setPhotoStatus("Uploading...");
+
+  resizeAndEncode(file)
+    .then(function(result){
+      wrap.style.backgroundImage = "url(" + result.dataUrl + ")";
+      const safeName = (guest.name || "guest").replace(/[^a-zA-Z0-9]+/g, "_");
+      const fileName = safeName + "_" + Date.now() + "_" + idx + ".jpg";
+      return callServer("uploadPhoto", [guest.guestId, guest.name, guest.company, fileName, result.mimeType, result.base64]);
+    })
+    .then(function(res){
+      wrap.classList.remove("uploading");
+      if(res && res.error){
+        wrap.classList.add("error");
+        wrap.title = res.error;
+        setPhotoStatus("Could not upload: " + res.error);
+      } else {
+        wrap.classList.add("done");
+        photoUploadCount++;
+        setPhotoStatus(photoUploadCount + (photoUploadCount === 1 ? " photo shared ✓" : " photos shared ✓"));
+      }
+    })
+    .catch(function(err){
+      wrap.classList.remove("uploading");
+      wrap.classList.add("error");
+      setPhotoStatus("Upload failed — check your connection and try again.");
+    });
+}
+
+document.getElementById("photoUploadBtn").addEventListener("click", function(){
+  document.getElementById("photoInput").click();
+});
+
+document.getElementById("photoInput").addEventListener("change", function(e){
+  const files = Array.prototype.slice.call(e.target.files || []);
+  files.forEach(function(file, idx){ handleOnePhoto(file, idx); });
+  e.target.value = "";
+});
+
+document.getElementById("startBtn").addEventListener("click", function(){
+  const company = document.getElementById("companyInput").value.trim();
+  const name = document.getElementById("nameInput").value.trim();
+  const errEl = document.getElementById("gate-error");
+
+  if(!company || !name){
+    errEl.style.display = "block";
+    return;
+  }
+  errEl.style.display = "none";
+
+  const btn = document.getElementById("startBtn");
+  btn.disabled = true;
+  btn.textContent = "Starting...";
+
+  const candidateGuest = { guestId: generateGuestId(), company: company, name: name };
+
+  callServer("registerGuest", [candidateGuest.guestId, company, name])
+    .then(function(res){
+      if(res && res.error){
+        errEl.textContent = "Could not save: " + res.error;
+        errEl.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Start My Journey";
+        return;
+      }
+      guest = candidateGuest;
+      saveJSON(GUEST_KEY, guest);
+      showApp();
+    })
+    .catch(function(err){
+      errEl.textContent = "Could not reach the sheet. Check your connection and try again.";
+      errEl.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "Start My Journey";
+    });
+});
+
+if(guest){
+  showApp();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+﻿# clasp (Apps Script CLI) - contains script IDs / auth
+.clasp.json
+.clasprc.json
+
+# Secrets / credentials
+.env
+*.env
+credentials*.json
+client_secret*.json
+token*.json
+
+# Node (if you ever use clasp/npm)
+node_modules/
+
+# Local exports / test data - never commit guest data
+*.csv
+*.xlsx
+exports/
+
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store
